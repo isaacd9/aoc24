@@ -51,54 +51,53 @@ func part1(in [][]int) int {
 }
 
 func asc2(row []int) bool {
-	var bad bool
+	rows := make([][]int, 0)
 
-	if row[1]-row[0] < 1 || row[1]-row[0] > 3 {
-		log.Printf("removing %v", row[0])
-		row = row[1:]
-		bad = true
+	for i := 0; i < len(row); i++ {
+		var newRow []int
+		for j, it := range row {
+			if j == i {
+				continue
+			}
+			newRow = append(newRow, it)
+		}
+		rows = append(rows, newRow)
 	}
 
-	for n := 1; n < len(row); n++ {
-		it := row[n]
-		log.Printf("[asc] it: %v, row[n-1]: %v", it, row[n-1])
+	log.Print("rows: ", rows)
 
-		if it-row[n-1] < 1 || it-row[n-1] > 3 {
-			if bad {
-				return false
-			}
-			log.Printf("removing %v, n: %+v", row[n], n)
-			row = append(row[:n], row[n+1:]...)
-			n--
-			bad = true
+	for _, r := range rows {
+		log.Printf("r: %v", r)
+		if dsc(r) || asc(r) {
+			return true
 		}
 	}
-	return true
+
+	return false
 }
 
 func dsc2(row []int) bool {
-	var bad bool
+	rows := make([][]int, 0)
 
-	if row[0]-row[1] < 1 || row[0]-row[1] > 3 {
-		log.Printf("removing %v", row[0])
-		row = row[1:]
-		bad = true
+	for i := 0; i < len(row); i++ {
+		var newRow []int
+		for j, it := range row {
+			if j == i {
+				continue
+			}
+			newRow = append(newRow, it)
+		}
+		rows = append(rows, newRow)
 	}
 
-	for n := 1; n < len(row); n++ {
-		it := row[n]
-		log.Printf("[dsc] it: %v, row[n-1]: %v", it, row[n-1])
-		if row[n-1]-it < 1 || row[n-1]-it > 3 {
-			if bad {
-				return false
-			}
-			log.Printf("removing %v, n: %+v", row[n], n)
-			row = append(row[:n], row[n+1:]...)
-			n--
-			bad = true
+	log.Print("rows: ", rows)
+	for _, r := range rows {
+		if dsc(r) || asc(r) {
+			return true
 		}
 	}
-	return true
+
+	return false
 }
 
 func part2(in [][]int) int {
@@ -106,14 +105,14 @@ func part2(in [][]int) int {
 
 	for _, row := range in {
 		log.Printf("row: %v", row)
-		if row[1] > row[0] {
+		if row[1] > row[0] || row[2] > row[0] {
 			if asc2(row) {
 				fmt.Println("ok")
 				c++
 			} else {
 				fmt.Println("not ok")
 			}
-		} else {
+		} else if row[1] < row[0] || row[2] < row[0] {
 			if dsc2(row) {
 				fmt.Println("ok")
 				c++
